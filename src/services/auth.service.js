@@ -3,6 +3,9 @@ import bcrypt from "bcrypt";
 import createHttpError from "http-errors";
 
 export async function createUser(body) {
+    //check empCheck
+    await getEmployee(body.empId)
+//create User
     const result = await prisma.user.create({ data: 
         body
      })
@@ -27,7 +30,7 @@ export async function loginUser(body){
 export async function getEmployee(empId){
     //get employee data
     const data = await prisma.employee.findUnique({where:{employeeId:empId}})
-    if(!data){throw createHttpError(404,"data not found")}
-    console.log(data)
+    if(!data){throw createHttpError(404,"employee not found")}
+    // console.log(data)
     return data
 }
