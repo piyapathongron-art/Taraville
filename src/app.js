@@ -1,0 +1,27 @@
+import express from "express"
+import authRoute from "./routes/auth.route.js"
+import errorHandlerMiddleware from "./middlewares/error.middleware.js"
+import employeeRoute from "./routes/employee.route.js"
+import notfoundMiddleware from "./middlewares/notfound.middleware.js"
+import userRoutes from "./routes/user.route.js"
+import housesRoutes from "./routes/houses.route.js"
+const app = express()
+app.use(express.json())
+
+//CORS
+
+//
+
+app.get("/",(req,res)=> {
+    res.send("test")
+})
+
+app.use("/api/auth",authRoute)
+app.use("/api/employees",employeeRoute)
+app.use("/api/users",userRoutes)
+app.use("/api/houses",housesRoutes)
+
+app.use(errorHandlerMiddleware)
+app.use(notfoundMiddleware)
+
+export default app
