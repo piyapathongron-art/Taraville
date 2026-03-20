@@ -9,8 +9,8 @@ router.use(authenMiddleware)
 router.use(adminAuthen)
 
 router.get("/",getAllEmployee)
-router.get("/:id",getEmployeeById)
 router.post("/",createEmployeeController)
+router.get("/:id",getEmployeeById)
 router.put("/:id",editEmployee)
 router.delete("/:id",deleteEmployee)
 

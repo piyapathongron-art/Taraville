@@ -1,5 +1,5 @@
 import express from "express";
-import { createAssignment, findMyAssignment, getAllAssignment, getAssignmentByid } from "../controllers/assignment.controller.js";
+import { createAssignment, editAssignment, findMyAssignment, getAllAssignment, getAssignmentByid } from "../controllers/assignment.controller.js";
 import authenMiddleware from "../middlewares/authen.middleware.js";
 
 const router = express.Router()
@@ -7,7 +7,8 @@ const router = express.Router()
 router.use(authenMiddleware)
 router.get("/", getAllAssignment)
 router.get("/me",findMyAssignment)
-router.get("/:id", getAssignmentByid)
 router.post("/", createAssignment)
+router.post("/:id", editAssignment)
+router.get("/:id", getAssignmentByid)
 
 export default router

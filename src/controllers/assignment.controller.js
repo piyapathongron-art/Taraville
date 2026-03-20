@@ -1,5 +1,5 @@
 import createError from "http-errors"
-import { createAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
+import { createAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
 
 export async function getAllAssignment(req,res,next){
     const result = await getAllAssignmentService()
@@ -8,7 +8,7 @@ export async function getAllAssignment(req,res,next){
 
 export async function getAssignmentByid(req,res,next){
     const id = +req.params.id
-    if(!Number(id))next()
+    
     const result = await findAssignmentBy("assignmentId",id)
     res.json(result)
 }
@@ -34,5 +34,20 @@ export async function findMyAssignment(req,res,next) {
     res.json({employeeId: empId,
         totalAssignment: !result ? 0 : result.length,
         assignment: result
+    })
+}
+
+export async function editAssignment(req,res,next) {
+    const id = +req.params.id
+    const data = req.body
+    //check id
+    if(!Number(id)) throw createError(400,"params is not a number")
+    //check data
+    if(!data) throw createError(400,"body required")
+    //edit assignment
+    const result = await editAssignmentService(id,data)
+    res.json({success: Boolean(result),
+        message:"edit success",
+        newAssignmentDetails: result
     })
 }
