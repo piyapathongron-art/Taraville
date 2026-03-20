@@ -20,7 +20,15 @@ export async function getEmployeeByIdService(id) {
     return result
 }
 
+export async function getEmployeeBy(col,val){
+    const result = prisma.employee.findFirst({where:{[col]:val}})
+}
+
 export async function createEmployees(data) {
+    //check phone
+    const check = await getEmployeeBy("phone",data.phone)
+    if(check) throw createHttpError(409,"employee or phone already exist")
+    //create
     const result = await prisma.employee.create({ data: data })
     return result
 }

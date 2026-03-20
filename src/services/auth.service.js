@@ -28,7 +28,7 @@ export async function loginUser(body){
 }
 
 export async function getEmployee(empId){
-    //get employee data
+    //get employee data by empId
     const data = await prisma.employee.findUnique({where:{employeeId:empId}})
     if(!data){throw createHttpError(404,"employee not found")}
     // console.log(data)

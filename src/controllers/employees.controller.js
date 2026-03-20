@@ -17,7 +17,7 @@ export async function getEmployeeById(req,res,next){
     const result = await getEmployeeByIdService(id)
     if(!result){throw createHttpError(404,"employee not found")}
 
-    res.send(result)
+    res.json(result)
 }
 
 export async function createEmployeeController(req,res,next) {
@@ -38,8 +38,11 @@ export async function createEmployeeController(req,res,next) {
 export async function editEmployee(req,res,next) {
     const data = req.body
     const id = +req.params.id
-    console.log(id)
+    //check id and data
+    if(!Number(id)) throw createHttpError(400,"employee id is not a number")
+    // console.log(id)
     if(!data){throw createHttpError(400,"required data")}
+    //edit 
     const result = await editEmployeesService(id,data)
     res.json({
         status:Boolean(result),
@@ -51,6 +54,8 @@ export async function editEmployee(req,res,next) {
 
 export async function deleteEmployee(req,res,next){
     const id = +req.params.id
+    //check id
+    if(!Number(id)) throw createHttpError(400,"employee id is not a number")
     const result = await deleteEmployeeService(id)
     res.json({status: Boolean(result),
         message:"Delete Success",
