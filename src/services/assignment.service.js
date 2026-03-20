@@ -37,3 +37,8 @@ export async function findAssignmentBy(col,val) {
     if(!result) throw createError(404,"assignment not found")
     return result
 }
+
+export async function getMyAssignmentService(id){
+    const result = await prisma.assignment.findMany({where:{empId:id}})
+    return result
+}
