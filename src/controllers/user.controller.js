@@ -7,6 +7,8 @@ export async function getAllUser(req,res,next) {
     res.json(result)
 }
 export async function createUser(req,res,next) {
+    //check body
+    if(!req.body) throw createError(400,"required body")
     //valify data
     const data = await registerSchemaByAdmin.parseAsync(req.body)
     //create + check existing
