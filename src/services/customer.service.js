@@ -28,3 +28,13 @@ export async function editCustomerService(id, data) {
     const result = await prisma.customer.update({ where: { customerId: id }, data: data })
     return result
 }
+
+export async function deleteCustomerService(id) {
+    //check customer exist
+    const check = await getCustomerBy("customerId", id)
+    if (!check) throw createError(404, "customer not found")
+    //soft delete
+    const now = new Date;
+    const result = await prisma.customer.update({ where: { customerId: id }, data: { deletedAt:now } })
+    return result
+}
