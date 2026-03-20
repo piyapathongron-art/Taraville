@@ -11,7 +11,6 @@ export async function getAllHousesService() {
 export async function findHousesBy(col, val) {
 
     const result = await prisma.house.findFirst({ where: { [col]: val , deletedAt:null } })
-    if(!result) throw createError(404,"house not found")
     return result
 }
 
@@ -27,7 +26,6 @@ export async function addHousesService(data) {
 export async function editHouseService(id,data) {
     //check exist
     const check = await findHousesBy("houseId",id)
-    
     if(!check) throw createError(404,"house not found")
     //edit house
     return await prisma.house.update({where:{houseId:id}, data:data})

@@ -12,6 +12,7 @@ export async function getHouseById(req,res,next){
     if(!Number(id)) throw createError(400,"houseId is not a Number")
     //find house by houseId
     const result = await findHousesBy("houseId",id)
+    if(!result) throw createError(404,"house not found")
     res.json({result})
 }
 
@@ -52,7 +53,7 @@ export async function editHouse(req,res,next) {
 export async function deleteHouse(req,res,next) {
     const id = +req.params.id
     //check id
-    if(!Number(id)) throw createError(400, "code is not a Number")
+    if(!Number(id)) throw createError(400, "houseId is not a Number")
     //delete house
     const result = await deleteHouseService(id)
     res.json({success:Boolean(result),
