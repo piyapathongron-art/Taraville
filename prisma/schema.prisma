@@ -111,7 +111,7 @@ model Customer {
   customerId  Int     @id @default(autoincrement())
   firstName   String  @db.VarChar(100)
   lastName    String  @db.VarChar(100)
-  phone       String? @db.VarChar(20)
+  phone       String @unique @db.VarChar(20)
   lineId      String? @db.VarChar(50)
   email       String? @db.VarChar(100)
   houseNo     String? @db.VarChar(50)
