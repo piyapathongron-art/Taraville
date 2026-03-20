@@ -33,9 +33,18 @@ export async function editSurveyService(id, data) {
     //edit Survey
     const result = await prisma.projectSurvey.update({
         where: { surveyId: id },
-        data: 
+        data:
             data
-        
+
     })
+    return result
+}
+export async function deleteSurveyService(id) {
+    //check survey exist
+    const checkSurvey = await getSurveyBy("surveyId", id)
+    if (!checkSurvey) throw createError(404, "survey not found")
+    //soft delete
+    const now = new Date;
+    const result = await prisma.projectSurvey.update({ where: { surveyId: id }, data: { deletedAt: now } })
     return result
 }

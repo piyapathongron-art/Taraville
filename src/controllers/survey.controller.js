@@ -1,4 +1,4 @@
-import { addSurvey, editSurveyService, getAllSurveyService, getSurveyBy } from "../services/survey.service.js";
+import { addSurvey, deleteSurveyService, editSurveyService, getAllSurveyService, getSurveyBy } from "../services/survey.service.js";
 import createError from "http-errors";
 export async function getAllSurvey(req,res,next) {
     const result = await getAllSurveyService()
@@ -47,5 +47,17 @@ export async function editSurvey(req,res,next) {
     res.json({success:Boolean(result),
         message:"edit survey success",
         newSurvay : result
+    })
+}
+
+export async function deleteSurvey(req,res,next) {
+    //check id
+    const id = +req.params.id
+    if(!Number(id)) throw createError(400,"survey Id is not a number")
+    //delete
+    const result = await deleteSurveyService(id)
+    res.json({success:Boolean(result),
+        message:"delate Survey success",
+        surveyId: result.surveyId
     })
 }
