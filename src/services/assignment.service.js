@@ -11,8 +11,6 @@ export async function getAllAssignmentService() {
 }
 
 export async function createAssignmentService(data) {
-
-
     //check house
     const checkHouse = await findHousesBy("houseId", +data.houseId)
     if (!checkHouse) throw createError(404, "house not found")
@@ -36,7 +34,6 @@ export async function createAssignmentService(data) {
 
 export async function findAssignmentBy(col, val) {
     const result = await prisma.assignment.findFirst({ where: { [col]: val, deletedAt: null } });
-    if (!result) throw createError(404, "assignment not found")
     return result
 }
 

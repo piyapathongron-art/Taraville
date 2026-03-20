@@ -4,9 +4,11 @@ import createHttpError from "http-errors"
 
 export async function getAllEmployee(req,res,next){
     //get all employee
-    const allEmp = await allEmployee()
+    const result = await allEmployee()
     // console.log(allEmp)
-    res.json(allEmp)
+    res.json({totalEmployee:result.length,
+        result
+    })
 }
 
 export async function getEmployeeById(req,res,next){

@@ -10,6 +10,7 @@ export async function getAssignmentByid(req,res,next){
     const id = +req.params.id
     
     const result = await findAssignmentBy("assignmentId",id)
+    if(!result) throw createError(404,"assignment not found")
     res.json(result)
 }
 

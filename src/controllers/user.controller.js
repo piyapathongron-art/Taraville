@@ -4,7 +4,9 @@ import createError from "http-errors"
 
 export async function getAllUser(req,res,next) {
     const result = await getAllusersService()
-    res.json(result)
+    res.json({totalUser:result.length,
+        result
+    })
 }
 export async function createUser(req,res,next) {
     //check body

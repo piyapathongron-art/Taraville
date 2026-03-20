@@ -3,7 +3,9 @@ import createError from "http-errors";
 
 export async function getAllHouse(req, res, next) {
     const result = await getAllHousesService()
-    res.json(result)
+    res.json({totalHouse:result.length,
+        result
+    })
 }
 
 export async function getHouseById(req,res,next){
