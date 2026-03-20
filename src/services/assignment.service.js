@@ -68,3 +68,13 @@ export async function editAssignmentService(id, data) {
     })
     return result
 }
+
+export async function deleteAssignmentService(id){
+    const now = new Date;
+    const check = await findAssignmentBy("assignmentId",id)
+    //check assignment
+    if(!check) throw createError(404,"assignment not found")
+    //delete assignment
+    const result = await prisma.assignment.update({ where:{assignmentId:id},data:{deletedAt:now}})
+    return result
+}

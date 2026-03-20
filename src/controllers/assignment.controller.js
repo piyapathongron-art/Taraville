@@ -1,5 +1,5 @@
 import createError from "http-errors"
-import { createAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
+import { createAssignmentService, deleteAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
 
 export async function getAllAssignment(req,res,next){
     const result = await getAllAssignmentService()
@@ -49,5 +49,17 @@ export async function editAssignment(req,res,next) {
     res.json({success: Boolean(result),
         message:"edit success",
         newAssignmentDetails: result
+    })
+}
+
+export async function deleteAssignment(req,res,next) {
+    const id = +req.params.id
+    //check type of id
+    if(!Number(id)) throw createError(400,"assignment id is not a number")
+    
+    //delete assignment
+    const result = await deleteAssignmentService(id)
+    res.json({success: Boolean(result),
+        message:`assignment id:${result.assignmentId} deleted`
     })
 }
