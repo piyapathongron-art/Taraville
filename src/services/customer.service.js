@@ -7,15 +7,24 @@ export async function getAllCustomerService() {
 }
 
 export async function getCustomerBy(col, val) {
-    const result = await prisma.customer.findFirst({ where: { [col]: val, deletedAt: null } }) 
+    const result = await prisma.customer.findFirst({ where: { [col]: val, deletedAt: null } })
     return result
 }
 
 export async function addCustomer(data) {
-    const check = await getCustomerBy("phone",data.phone)
+    const check = await getCustomerBy("phone", data.phone)
     //check customer by phone
-    if(check) throw createError(409, "phone number have been used")
+    if (check) throw createError(409, "phone number have been used")
     //create customer
-    const result = await prisma.customer.create({data:data})
+    const result = await prisma.customer.create({ data: data })
+    return result
+}
+
+export async function editCustomerService(id, data) {
+    //check customer
+    const check = await getCustomerBy("customerId", id)
+    if (!check) throw createError(404, "customer not found");
+    //edit
+    const result = await prisma.customer.update({ where: { customerId: id }, data: data })
     return result
 }

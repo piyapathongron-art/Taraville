@@ -1,4 +1,4 @@
-import { addCustomer, getAllCustomerService, getCustomerBy } from "../services/customer.service.js";
+import { addCustomer, editCustomerService, getAllCustomerService, getCustomerBy } from "../services/customer.service.js";
 import createError from "http-errors"
 export async function getAllCustomer(req, res, next) {
     const result = await getAllCustomerService()
@@ -33,5 +33,20 @@ export async function createCustomer(req,res,next) {
             firstname : result.firstName,
             phone: result.phone
         }
+    })
+}
+
+export async function editCustomer(req,res,next) {
+    const id = +req.params.id;
+    //check id params
+    if(!Number(id)) throw createError(400,"customer id is not number")
+    const data = req.body;
+    //check req.body
+    if(!data)throw createError(400,"required data")
+    //edit / check customer
+    const result = await editCustomerService(id,data)
+    res.json({success:Boolean(result),
+        message:"edit customer complete",
+        newCustomerDetail: result
     })
 }
