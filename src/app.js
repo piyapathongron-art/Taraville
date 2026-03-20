@@ -5,6 +5,7 @@ import employeeRoute from "./routes/employee.route.js"
 import notfoundMiddleware from "./middlewares/notfound.middleware.js"
 import userRoutes from "./routes/user.route.js"
 import housesRoutes from "./routes/houses.route.js"
+import assignmentRoutes from "./routes/assignment.route.js"
 const app = express()
 app.use(express.json())
 
@@ -20,6 +21,7 @@ app.use("/api/auth",authRoute)
 app.use("/api/employees",employeeRoute)
 app.use("/api/users",userRoutes)
 app.use("/api/houses",housesRoutes)
+app.use("/api/assignments", assignmentRoutes)
 
 app.use(errorHandlerMiddleware)
 app.use(notfoundMiddleware)
