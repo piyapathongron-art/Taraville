@@ -1,17 +1,19 @@
 import { ZodError } from "zod"
 
-export default function errorHandlerMiddleware (err,req,res,next){
+export default function errorHandlerMiddleware(err, req, res, next) {
     console.log("!!!!!!!ERROR!!!!!!!")
     console.log(err)
 
-       if(err instanceof ZodError) {
+    if (err instanceof ZodError) {
         console.log(err.flatten())
-       return res.status(400).json({
-           message: "Validation Error",
-           errors: err.flatten().fieldErrors
-           // errors: err.issues.map(err => err.message)
-       })
-   }
+        const formatError = err.flatten()
+        return res.status(400).json({
+            message: "Validation Error",
+            fieldErrors: formatError.fieldErrors,
+            formErrors: formatError.formErrors
+            // errors: err.issues.map(err => err.message)
+        })
+    }
 
-    res.status(err.status || 500).json({error: err.message || "Internal Server Error"})
+    res.status(err.status || 500).json({ error: err.message || "Internal Server Error" })
 }

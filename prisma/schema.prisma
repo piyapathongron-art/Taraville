@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -14,30 +12,36 @@ datasource db {
 
 // Employees
 // ==========================================
-
 model Employee {
-  employeeId Int      @id @default(autoincrement())
-  firstName  String   @db.VarChar(100)
-  lastName   String   @db.VarChar(100)
-  phone      String   @unique @db.VarChar(20)
-  email      String?  @db.VarChar(100)
-  department String?  @db.VarChar(100)
-  salary     Decimal? @db.Decimal(10, 2)
-  address    String?  @db.Text
-  imageUrl   String?  @db.VarChar(255)
+  employeeId Int        @id @default(autoincrement())
+  firstName  String     @db.VarChar(50)
+  lastName   String     @db.VarChar(50)
+  phone      String     @unique @db.VarChar(10)
+  email      String?    @db.VarChar(30)
+  department Department @default(Employee)
+  salary     Decimal?   @db.Decimal(10, 2)
+  address    String?    @db.Text
+  imageUrl   String?    @db.VarChar(255)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  deletedAt  DateTime?
 
   user        User?
   assignments Assignment[]
 }
 
+enum Department {
+  Sale
+  Engineer
+  Staff
+  Employee
+}
+
 // Users
 // ==========================================
 model User {
-  userId   Int    @id @default(autoincrement())
+  userId   Int    @id @default(autoincrement()) 
   empId    Int    @unique
   password String @db.VarChar(255)
   role     Role   @default(User)
@@ -58,25 +62,44 @@ enum Role {
   Admin
 }
 
-// Houses
+// Houses & House Images
 // ==========================================
-
 model House {
   houseId     Int      @id @default(autoincrement())
-  houseCode   String?  @unique @db.VarChar(50)
-  houseName   String?  @db.VarChar(255)
-  projectName String?  @db.VarChar(255)
+  houseCode   String?  @unique @db.VarChar(20)
+  houseName   String?  @db.VarChar(100)
+  projectName String?  @db.VarChar(100)
   houseType   String?  @db.VarChar(100)
   price       Decimal? @db.Decimal(12, 2)
-  status      String?  @db.VarChar(50)
+  status      HStatus?
   details     String?  @db.Text
-  imageUrl    String?  @db.VarChar(255)
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
 
   assignments Assignment[]
+  images      HouseImage[]
+}
+
+
+model HouseImage {
+  imageId   Int      @id @default(autoincrement())
+  houseId   Int
+  imageUrl  String   @db.VarChar(255)
+  isCover   Boolean  @default(false) 
+
+  createdAt DateTime @default(now())
+
+  house House @relation(fields: [houseId], references: [houseId], onDelete: Cascade)
+}
+
+enum HStatus {
+  Available
+  Book
+  Sold
+  Repair
+  Building
 }
 
 // Assignments
@@ -85,7 +108,7 @@ model Assignment {
   assignmentId    Int       @id @default(autoincrement())
   houseId         Int
   empId           Int
-  taskTitle       String?   @db.VarChar(255)
+  taskTitle       String?   @db.VarChar(100)
   taskDescription String?   @db.Text
   dutyRole        String?   @db.VarChar(100)
   assignedDate    DateTime? @db.Date
@@ -111,7 +134,7 @@ model Customer {
   customerId  Int     @id @default(autoincrement())
   firstName   String  @db.VarChar(100)
   lastName    String  @db.VarChar(100)
-  phone       String @unique @db.VarChar(20)
+  phone       String  @unique @db.VarChar(20)
   lineId      String? @db.VarChar(50)
   email       String? @db.VarChar(100)
   houseNo     String? @db.VarChar(50)
@@ -129,7 +152,7 @@ model Customer {
   walkins WalkinLog[]
 }
 
-// 6. Project Surveys
+// Project Surveys
 // ==========================================
 model ProjectSurvey {
   surveyId               Int       @id @default(autoincrement())
@@ -142,7 +165,7 @@ model ProjectSurvey {
   interestedPropertyType String?   @db.VarChar(100)
   preferredBedroom       Int?
   preferredBathroom      Int?
-  decisionFactors        Json?
+  decisionFactors        Json?     
   familySize             String?   @db.VarChar(50)
   expectedBudget         String?   @db.VarChar(100)
   informationSource      String?   @db.VarChar(255)
@@ -182,15 +205,14 @@ model WalkinLog {
 
 // Audit Logs
 // ==========================================
-
 model AuditLog {
   logId     Int      @id @default(autoincrement())
   userId    Int?
-  action    String   @db.VarChar(50)
+  action    Action   
   tableName String   @db.VarChar(100)
   recordId  Int
-  oldData   Json?
-  newData   Json?
+  oldData   Json?    
+  newData   Json?    
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [userId], onDelete: SetNull)

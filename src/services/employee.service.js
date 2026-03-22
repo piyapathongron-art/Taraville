@@ -25,7 +25,7 @@ export async function getEmployeeBy(col,val){
 }
 
 export async function createEmployees(data) {
-    //check phone
+    //check phone // no need to be real email
     const check = await getEmployeeBy("phone",data.phone)
     if(check) throw createHttpError(409,"employee or phone already exist")
     //create
@@ -35,9 +35,9 @@ export async function createEmployees(data) {
 
 export async function editEmployeesService(id, data) {
     //check existing
-    const emp = await getEmployeeByIdService(id)
-    
-    if (!emp) { throw createHttpError(404, "employee not found") }
+    const employee = await getEmployeeByIdService(id)
+
+    if (!employee) { throw createHttpError(404, "employee not found") }
     
     //edit
     const result = await prisma.employee.update({

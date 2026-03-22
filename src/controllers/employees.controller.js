@@ -1,5 +1,6 @@
 import { allEmployee, createEmployees, deleteEmployeeService, editEmployeesService, getEmployeeByIdService } from "../services/employee.service.js";
 import createHttpError from "http-errors"
+import { createEmployeeSchema, updateEmployeeSchema } from "../validators/schema.js";
 
 
 export async function getAllEmployee(req,res,next){
@@ -12,9 +13,8 @@ export async function getAllEmployee(req,res,next){
 }
 
 export async function getEmployeeById(req,res,next){
-    //check params
-    const id = +req.params.id 
-    if(!Number(id)){throw createHttpError(400,"not an Id")}
+    //checked params by paramsvalidator
+    const id = req.params.id
     //get emp by id
     const result = await getEmployeeByIdService(id)
     if(!result){throw createHttpError(404,"employee not found")}
@@ -23,10 +23,8 @@ export async function getEmployeeById(req,res,next){
 }
 
 export async function createEmployeeController(req,res,next) {
-    //check body
-    const data = req.body
-    if(!data){throw createHttpError(400,"required data")}
-    // console.log(data)
+    //validator
+    const data = await createEmployeeSchema.parseAsync(req.body)
 
     //create emp
     const result = await createEmployees(data)
@@ -38,12 +36,12 @@ export async function createEmployeeController(req,res,next) {
 }
 
 export async function editEmployee(req,res,next) {
-    const data = req.body
-    const id = +req.params.id
-    //check id and data
-    if(!Number(id)) throw createHttpError(400,"employee id is not a number")
-    // console.log(id)
-    if(!data){throw createHttpError(400,"required data")}
+
+    //checked params by validator
+    const id = req.params.id
+    //validator
+    const data = await updateEmployeeSchema.parseAsync(req.body)
+
     //edit 
     const result = await editEmployeesService(id,data)
     res.json({
@@ -55,9 +53,7 @@ export async function editEmployee(req,res,next) {
 }
 
 export async function deleteEmployee(req,res,next){
-    const id = +req.params.id
-    //check id
-    if(!Number(id)) throw createHttpError(400,"employee id is not a number")
+    const id = req.params.id
     const result = await deleteEmployeeService(id)
     res.json({status: Boolean(result),
         message:"Delete Success",

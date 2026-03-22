@@ -1,5 +1,5 @@
 import { createUserService, findUserBy, getAllusersService } from "../services/user.service.js"
-import { registerSchemaByAdmin } from "../validators/schema.js"
+import { registerSchemaAdmin } from "../validators/schema.js"
 import createError from "http-errors"
 
 export async function getAllUser(req,res,next) {
@@ -12,7 +12,7 @@ export async function createUser(req,res,next) {
     //check body
     if(!req.body) throw createError(400,"required body")
     //valify data
-    const data = await registerSchemaByAdmin.parseAsync(req.body)
+    const data = await registerSchemaAdmin.parseAsync(req.body)
     //create + check existing
     const result = await createUserService(data)
     res.json({status: Boolean(result),
@@ -21,10 +21,11 @@ export async function createUser(req,res,next) {
     })
 }
 
+
+// why u here
 export async function getUserById(req,res,next){
     //check id
-    const id = +req.params.id
-    if(!Number(id)){throw createError(400,"not an Id")}
+    const id = req.params.id
     //chcek user
     const user = await findUserBy("userId",id)
     if(!user) {throw createError(404,"user not found")}
