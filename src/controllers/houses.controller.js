@@ -1,5 +1,6 @@
-import { addHousesService, deleteHouseService, editHouseService, findHousesBy, getAllHousesService } from "../services/houses.service.js";
+import { addHouseImageService, addHousesService, deleteHouseImageService, deleteHouseService, editHouseService, findHousesBy, getAllHousesService } from "../services/houses.service.js";
 import createError from "http-errors";
+import { createHouseSchema, houseImageSchema, updateHouseSchema } from "../validators/schema.js";
 
 export async function getAllHouse(req, res, next) {
     const result = await getAllHousesService()
@@ -9,9 +10,8 @@ export async function getAllHouse(req, res, next) {
 }
 
 export async function getHouseById(req,res,next){
-    const id = +req.params.id
+    const id = req.params.id
     //check params
-    if(!Number(id)) throw createError(400,"houseId is not a Number")
     //find house by houseId
     const result = await findHousesBy("houseId",id)
     if(!result) throw createError(404,"house not found")
@@ -19,11 +19,8 @@ export async function getHouseById(req,res,next){
 }
 
 export async function addHouse(req, res, next) {
-    //check body
-    const data = req.body
-    if (!data) throw createError(400, "required house infomation")
     //validate
-
+    const data = await createHouseSchema.parseAsync(req.body)
     //create house
     const result = await addHousesService(data)
 
@@ -35,13 +32,9 @@ export async function addHouse(req, res, next) {
 }
 
 export async function editHouse(req,res,next) {
-    const id = +req.params.id;
-    const data = req.body
-    //check params + body
-    if(!Number(id)) throw createError(400, "code is not a Number")
-    if(!data) throw createError(400,"body required")
+    const id = req.params.id;
     //validation
-
+    const data = await updateHouseSchema.parseAsync(req.body)
     //edit house
     const result = await editHouseService(id,data)
     res.json({
@@ -53,9 +46,7 @@ export async function editHouse(req,res,next) {
 }
 
 export async function deleteHouse(req,res,next) {
-    const id = +req.params.id
-    //check id
-    if(!Number(id)) throw createError(400, "houseId is not a Number")
+    const id = req.params.id
     //delete house
     const result = await deleteHouseService(id)
     res.json({success:Boolean(result),
@@ -65,4 +56,30 @@ export async function deleteHouse(req,res,next) {
                 code: result.houseCode
             }
     })
+}
+
+export async function addHouseImage(req,res,next) {
+    //check params by middlewares
+    const id = req.params.id
+    //validator image
+    const url = await houseImageSchema.parseAsync(req.body)
+    //upload image
+    const result = await addHouseImageService(id,url)
+    res.json({success:Boolean(result),
+        message:"upload image success"
+    })
+}
+
+export async function deleteHouseImage(req,res,next) {
+        //check params by middlewares
+        const houseId = req.params.id
+        const imageId = req.params.imageId
+        //delete
+        const result = await deleteHouseImageService(houseId,imageId)
+        res.json({success:Boolean(result),
+            message:"image deleted",
+            imageId: result.imageId,
+            houseId: result.houseId
+        })
+        
 }
