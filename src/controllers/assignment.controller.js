@@ -1,5 +1,6 @@
 import createError from "http-errors"
 import { createAssignmentService, deleteAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
+import { createAssignmentSchema, updateAssignmentSchema } from "../validators/schema.js"
 
 export async function getAllAssignment(req,res,next){
     const result = await getAllAssignmentService()
@@ -7,19 +8,17 @@ export async function getAllAssignment(req,res,next){
 }
 
 export async function getAssignmentByid(req,res,next){
-    const id = +req.params.id
-    
+    //checked by middlewares
+    const id = req.params.id
+    //getById
     const result = await findAssignmentBy("assignmentId",id)
     if(!result) throw createError(404,"assignment not found")
     res.json(result)
 }
 
 export async function createAssignment(req,res,next) {
-    const data = req.body
-    //check data
-    if(!data) throw createError(400,"body required")
     //validator
-
+        const data = await createAssignmentSchema.parseAsync(req.body)
     // create assignment
     const result = await createAssignmentService(data)
     res.json({success: Boolean(result),
@@ -29,6 +28,7 @@ export async function createAssignment(req,res,next) {
 }
 
 export async function findMyAssignment(req,res,next) {
+    //check employeeId from token
     const empId = +req.user.empId
     if(!empId)throw createError(401,"token invalid")
     const result = await getMyAssignmentService(empId)
@@ -39,12 +39,10 @@ export async function findMyAssignment(req,res,next) {
 }
 
 export async function editAssignment(req,res,next) {
-    const id = +req.params.id
-    const data = req.body
-    //check id
-    if(!Number(id)) throw createError(400,"params is not a number")
-    //check data
-    if(!data) throw createError(400,"body required")
+    //checked params by middlewares
+    const id = req.params.id
+    //validator
+    const data = await updateAssignmentSchema.parseAsync(req.body)
     //edit assignment
     const result = await editAssignmentService(id,data)
     res.json({success: Boolean(result),
@@ -54,10 +52,8 @@ export async function editAssignment(req,res,next) {
 }
 
 export async function deleteAssignment(req,res,next) {
-    const id = +req.params.id
-    //check type of id
-    if(!Number(id)) throw createError(400,"assignment id is not a number")
-    
+    //checked id by params middlewares
+    const id = req.params.id
     //delete assignment
     const result = await deleteAssignmentService(id)
     res.json({success: Boolean(result),

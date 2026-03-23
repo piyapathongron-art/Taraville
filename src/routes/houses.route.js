@@ -15,7 +15,7 @@ router.use(adminAuthen)
 router.post("/",addHouse)
 router.put("/:id", paramsValidator,editHouse)
 router.delete("/:id",paramsValidator,deleteHouse)
-router.post("/:id/image", paramsValidator,addHouseImage)
-router.delete("/:id/image/:imageId",paramsValidator,deleteHouseImage)
+router.post("/:id/images", paramsValidator,addHouseImage)
+router.delete("/:id/images/:imageId",paramsValidator,deleteHouseImage)
 
 export default router

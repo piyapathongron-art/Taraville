@@ -66,7 +66,8 @@ export async function addHouseImage(req,res,next) {
     //upload image
     const result = await addHouseImageService(id,url)
     res.json({success:Boolean(result),
-        message:"upload image success"
+        message:"upload image success",
+        imageId: result.imageId
     })
 }
 

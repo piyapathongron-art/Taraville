@@ -19,15 +19,7 @@ export async function createAssignmentService(data) {
     if (!checkemp) throw createError(404, "employee not found")
     //create assignment
     const result = await prisma.assignment.create({
-        data: {
-            empId: +data.empId,
-            houseId: +data.houseId,
-            taskTitle: data.taskTitle,
-            taskDescription: data.taskDescription,
-            dutyRole: data.dutyRole,
-            assignedDate: data.assignedDate,
-            status: data.status
-        }
+        data
     })
     return result
 }

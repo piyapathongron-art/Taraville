@@ -30,6 +30,16 @@ export const idParamsValidator = z.coerce
   .number({
    error: "ID must be number"
   })
-  .int("ID integer")
+  .int("ID must be integer")
   .positive("ID must be above 0")
   .max(10, "ID too long");
+
+  //params for houseImage
+  export const imageIdParamsValidator = z.coerce
+  .number({
+    error:"ID must be number"
+  })
+  .int("Id must be integer")
+  .positive("Id must be Positive")
+  .max(10,"Id too long")
+  .optional()

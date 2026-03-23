@@ -86,7 +86,10 @@ export const updateHouseSchema = houseBase.partial().transform(data => ({
 export const houseImageSchema = z.object({
   imageUrl: urlValidator,
   isCover: z.boolean().optional().default(false)
-});
+}).transform(data =>({
+  imageUrl: data.imageUrl,
+  isCover: data.isCover
+}));
 
 //Assignment Schemas ==========================================
 const assignmentBase = z.object({
