@@ -35,6 +35,7 @@ export async function editSurvey(req,res,next) {
     const id = req.params.id
     //validator
     const data = await updateSurveySchema.parseAsync(req.body)
+    // console.log(data)
     //edit + check
     const result = await editSurveyService(id,data)
     res.json({success:Boolean(result),

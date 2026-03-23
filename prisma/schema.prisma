@@ -1,5 +1,5 @@
 // This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// learn more about it in the docs: [https://pris.ly/d/prisma-schema](https://pris.ly/d/prisma-schema)
 
 generator client {
   provider = "prisma-client-js"
@@ -23,9 +23,9 @@ model Employee {
   address    String?    @db.Text
   imageUrl   String?    @db.VarChar(255)
 
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  deletedAt  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   user        User?
   assignments Assignment[]
@@ -41,7 +41,7 @@ enum Department {
 // Users
 // ==========================================
 model User {
-  userId   Int    @id @default(autoincrement()) 
+  userId   Int    @id @default(autoincrement())
   empId    Int    @unique
   password String @db.VarChar(255)
   role     Role   @default(User)
@@ -52,7 +52,6 @@ model User {
 
   employee  Employee        @relation(fields: [empId], references: [employeeId])
   surveys   ProjectSurvey[]
-  walkins   WalkinLog[]
   auditLogs AuditLog[]
 }
 
@@ -74,20 +73,19 @@ model House {
   status      HStatus?
   details     String?  @db.Text
 
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 
   assignments Assignment[]
   images      HouseImage[]
 }
 
-
 model HouseImage {
-  imageId   Int      @id @default(autoincrement())
-  houseId   Int
-  imageUrl  String   @db.VarChar(255)
-  isCover   Boolean  @default(false) 
+  imageId  Int     @id @default(autoincrement())
+  houseId  Int
+  imageUrl String  @db.VarChar(255)
+  isCover  Boolean @default(false)
 
   createdAt DateTime @default(now())
 
@@ -149,58 +147,40 @@ model Customer {
   deletedAt DateTime?
 
   surveys ProjectSurvey[]
-  walkins WalkinLog[]
 }
 
 // Project Surveys
 // ==========================================
 model ProjectSurvey {
-  surveyId               Int       @id @default(autoincrement())
+  surveyId               Int        @id @default(autoincrement())
   customerId             Int
   userId                 Int?
-  visitDate              DateTime? @db.Date
-  gender                 String?   @db.VarChar(20)
-  occupation             String?   @db.VarChar(100)
-  incomeRange            String?   @db.VarChar(100)
-  interestedPropertyType String?   @db.VarChar(100)
+  surveyType             SurveyType @default(Online)
+  visitDate              DateTime?  @db.Date
+  gender                 String?    @db.VarChar(20)
+  occupation             String?    @db.VarChar(100)
+  incomeRange            String?    @db.VarChar(100)
+  interestedPropertyType String?    @db.VarChar(100)
   preferredBedroom       Int?
   preferredBathroom      Int?
-  decisionFactors        Json?     
-  familySize             String?   @db.VarChar(50)
-  expectedBudget         String?   @db.VarChar(100)
-  informationSource      String?   @db.VarChar(255)
-  installmentCapacity    String?   @db.VarChar(100)
+  familySize             String?    @db.VarChar(50)
+  expectedBudget         String?    @db.VarChar(100)
+  informationSource      String?    @db.VarChar(255)
+  installmentCapacity    String?    @db.VarChar(100)
+  remark                 String?    @db.Text
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  customer Customer @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [userId], onDelete: SetNull)
+  customer        Customer          @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
+  user            User?             @relation(fields: [userId], references: [userId], onDelete: SetNull)
+  decisionFactors DecisionFactors[]
 }
 
-// Walkin Logs
-// ==========================================
-model WalkinLog {
-  logId               Int       @id @default(autoincrement())
-  customerId          Int
-  userId              Int?
-  visitDate           DateTime? @db.Date
-  age                 Int?
-  desiredBuildingType String?   @db.VarChar(255)
-  categoryType        String?   @db.VarChar(100)
-  floors              Int?
-  budget              String?   @db.VarChar(100)
-  expectedStartTime   String?   @db.VarChar(100)
-  informationSource   String?   @db.VarChar(255)
-  remark              String?   @db.Text
-
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  customer Customer @relation(fields: [customerId], references: [customerId], onDelete: Cascade)
-  user     User?    @relation(fields: [userId], references: [userId], onDelete: SetNull)
+enum SurveyType {
+  Online
+  Walkin
 }
 
 // Audit Logs
@@ -208,11 +188,11 @@ model WalkinLog {
 model AuditLog {
   logId     Int      @id @default(autoincrement())
   userId    Int?
-  action    Action   
+  action    Action
   tableName String   @db.VarChar(100)
   recordId  Int
-  oldData   Json?    
-  newData   Json?    
+  oldData   Json?
+  newData   Json?
   createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [userId], onDelete: SetNull)
@@ -223,4 +203,12 @@ enum Action {
   UPDATE
   SOFTDELETE
   HARDDELETE
+}
+
+model DecisionFactors {
+  id             Int     @id @default(autoincrement())
+  surveyId       Int
+  decisionFactor String?
+
+  survey ProjectSurvey @relation(fields: [surveyId], references: [surveyId], onDelete: Cascade)
 }
