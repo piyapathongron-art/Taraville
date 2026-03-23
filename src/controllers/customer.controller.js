@@ -1,5 +1,6 @@
 import { addCustomer, deleteCustomerService, editCustomerService, getAllCustomerService, getCustomerBy } from "../services/customer.service.js";
 import createError from "http-errors"
+import { createCustomerSchema, updateCustomerSchema } from "../validators/schema.js";
 export async function getAllCustomer(req, res, next) {
     const result = await getAllCustomerService()
     res.json({
@@ -9,21 +10,18 @@ export async function getAllCustomer(req, res, next) {
 }
 
 export async function getCustomerById(req, res, next) {
-    const id = +req.params.id
-    //check customer
-    if (!Number(id)) createError(400, "Customer id is not Number")
+    //check id by params middlewares
+    const id = req.params.id
     //find + check customer
     const result = await getCustomerBy("customerId", id)
     if(!result) createError(404, "user not found")
+
     res.json(result)
 }
 
 export async function createCustomer(req,res,next) {
-    const data = req.body
-    //check body null
-    if(!data) throw createError(400,"required data")
     //validator
-
+    const data = await createCustomerSchema.parseAsync(req.body)
     //create
     const result = await addCustomer(data)
     res.json({success:Boolean(result),
@@ -37,12 +35,10 @@ export async function createCustomer(req,res,next) {
 }
 
 export async function editCustomer(req,res,next) {
-    const id = +req.params.id;
-    //check id params
-    if(!Number(id)) throw createError(400,"customer id is not number")
-    const data = req.body;
-    //check req.body
-    if(!data)throw createError(400,"required data")
+    //check id by params middlewares
+    const id = req.params.id;
+    //validator
+    const data = await updateCustomerSchema.parseAsync(req.body)
     //edit / check customer
     const result = await editCustomerService(id,data)
     res.json({success:Boolean(result),
@@ -52,9 +48,8 @@ export async function editCustomer(req,res,next) {
 }
 
 export async function deleteCustomer(req,res,next) {
-    const id = +req.params.id
-    //check id params
-    if(!Number(id))throw createError(400,"cusomter id is not a number")
+    //check id by params middleware
+    const id = req.params.id
     //delete customer
     const result = await deleteCustomerService(id)
     res.json({success:Boolean(result),
