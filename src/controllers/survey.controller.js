@@ -1,5 +1,6 @@
 import { addSurvey, deleteSurveyService, editSurveyService, getAllSurveyService, getSurveyBy } from "../services/survey.service.js";
 import createError from "http-errors";
+import { createSurveySchema, updateSurveySchema } from "../validators/schema.js";
 export async function getAllSurvey(req,res,next) {
     const result = await getAllSurveyService()
     res.json({totalSurvey:result.length,
@@ -8,9 +9,8 @@ export async function getAllSurvey(req,res,next) {
 }
 
 export async function getSurveyById(req,res,next) {
-    const id = +req.params.id
-    //check id params
-    if(!Number(id))throw createError(400,"surveyid is not a number")
+    //check id by params middlewares
+    const id = req.params.id
     //find survey by id params
     const result = await getSurveyBy("surveyId",id)
     if(!result) throw createError(404,"survey not found")
@@ -18,11 +18,8 @@ export async function getSurveyById(req,res,next) {
 }
 
 export async function createSurvey(req,res,next) {
-    const data = req.body
-    //check body
-    if(!data) throw createError(400, "requierd body")
     //validator
-
+const data = await createSurveySchema.parseAsync(req.body)
     //create
     const result = await addSurvey(data)
     res.json({success:Boolean(result),
@@ -34,14 +31,10 @@ export async function createSurvey(req,res,next) {
 }
 
 export async function editSurvey(req,res,next) {
-    //check params id
-    const id = +req.params.id
-    if(!Number(id)) throw createError(400, "surveyID is not number")
-    //check body
-    const data = req.body
-    if(!data) throw createError(400, "required body")
+    //check id by params middlewares
+    const id = req.params.id
     //validator
-
+    const data = await updateSurveySchema.parseAsync(req.body)
     //edit + check
     const result = await editSurveyService(id,data)
     res.json({success:Boolean(result),
@@ -51,9 +44,8 @@ export async function editSurvey(req,res,next) {
 }
 
 export async function deleteSurvey(req,res,next) {
-    //check id
-    const id = +req.params.id
-    if(!Number(id)) throw createError(400,"survey Id is not a number")
+    //check id by parmas middlewares
+    const id = req.params.id
     //delete
     const result = await deleteSurveyService(id)
     res.json({success:Boolean(result),
