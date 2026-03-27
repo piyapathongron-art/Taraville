@@ -30,7 +30,7 @@ export async function findAssignmentBy(col, val) {
 }
 
 export async function getMyAssignmentService(id) {
-    const result = await prisma.assignment.findMany({ where: { empId: id } })
+    const result = await prisma.assignment.findMany({ where: { empId: id },include:{house:true} })
     return result
 }
 

@@ -7,13 +7,15 @@ export async function allEmployee() {
         {
             deletedAt:
                 null
-        }
+        },
+        include:{user:{select:{userId:true}}}
     }
     )
     return result
 }
 
 export async function getEmployeeByIdService(id) {
+    console.log(id)
     const result = prisma.employee.findUnique({ where: { employeeId: id,
         deletedAt : null
      } })
@@ -22,6 +24,7 @@ export async function getEmployeeByIdService(id) {
 
 export async function getEmployeeBy(col,val){
     const result = prisma.employee.findFirst({where:{[col]:val}})
+    return result
 }
 
 export async function createEmployees(data) {

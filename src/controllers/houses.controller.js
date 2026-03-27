@@ -1,6 +1,6 @@
-import { addHouseImageService, addHousesService, deleteHouseImageService, deleteHouseService, editHouseService, findHousesBy, getAllHousesService } from "../services/houses.service.js";
+import { addHouseImageService, addHousesService, deleteHouseImageService, deleteHouseService, editHouseService, findHousesBy, getAllHousesService, updateHouseImagesService } from "../services/houses.service.js";
 import createError from "http-errors";
-import { createHouseSchema, houseImageSchema, updateHouseSchema } from "../validators/schema.js";
+import { createHouseSchema, houseImageSchema, updateHouseImagesSchema, updateHouseSchema } from "../validators/schema.js";
 
 export async function getAllHouse(req, res, next) {
     const result = await getAllHousesService()
@@ -83,4 +83,22 @@ export async function deleteHouseImage(req,res,next) {
             houseId: result.houseId
         })
         
+}
+
+export async function updateHouseImages(req, res, next) {
+    try {
+        const id = req.params.id
+
+        const data = await updateHouseImagesSchema.parseAsync(req.body);
+       
+        const result = await updateHouseImagesService(id, data.images);
+        
+        res.json({
+            success: true,
+            message: "อัปเดตรูปภาพบ้านสำเร็จ",
+            count: result
+        });
+    } catch (error) {
+        next(error);
+    }
 }

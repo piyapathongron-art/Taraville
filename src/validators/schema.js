@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { emailValidator, optionalDateString, optionalNumberString, optionalString, passwordValidator, phoneValidator, requiredString, urlValidator } from '../utils/zodValidator.js';
+import { emailValidator, optionalDateString, optionalNumberString, optionalString, passwordValidator, phoneValidator, requiredNumber, requiredString, urlValidator } from '../utils/zodValidator.js';
 
 
 //Auth Schemas ==========================================
@@ -24,11 +24,16 @@ export const registerSchema = registerBase
   }));
 
   //create by admin
-  export const registerSchemaAdmin = registerBase.transform(async data => ({
-    empId: Number(data.empId),
+  export const registerSchemaAdmin = z.object({
+    empId: requiredString("empId"),
+    password: passwordValidator,
+    role: z.enum(['User','Staff','Admin']).optional().default("User")
+  }).transform(async data =>({
+    empId: +data.empId,
     password: bcrypt.hashSync(data.password,8),
-    role: data.role
+    role: data.role    
   }))
+  
 
   //login
 export const loginSchema = z.object({
@@ -67,8 +72,9 @@ const houseBase = z.object({
   projectName: optionalString,
   houseType: optionalString,
   price: optionalNumberString,
-  status: z.enum(['Available', 'Book', 'Sold', 'Repair', 'Building']).optional(),
-  details: optionalString
+  status: z.enum(['Available', 'Book', 'Sold', 'Repair', 'Building']).optional().default("Available"),
+  details: optionalString,
+  ownerPhone : phoneValidator.optional()
 });
 
 // create
@@ -90,6 +96,10 @@ export const houseImageSchema = z.object({
   imageUrl: data.imageUrl,
   isCover: data.isCover
 }));
+
+export const updateHouseImagesSchema = z.object({
+  images: z.array(z.url("Must be a valid URL")).default([])
+});
 
 //Assignment Schemas ==========================================
 const assignmentBase = z.object({
@@ -130,7 +140,10 @@ const customerBase = z.object({
   subDistrict: optionalString,
   district: optionalString,
   province: optionalString,
-  zipcode: optionalString
+  zipcode: optionalString,
+  gender: optionalString,
+  occupation: optionalString,
+  incomeRange: optionalString
 });
 
 //create
@@ -143,9 +156,6 @@ const surveyBase = z.object({
   customerId: requiredString("customerId"),
   userId: optionalNumberString,
   visitDate: optionalDateString,
-  gender: optionalString,
-  occupation: optionalString,
-  incomeRange: optionalString,
   interestedPropertyType: optionalString,
   preferredBedroom: optionalNumberString,
   preferredBathroom: optionalNumberString,
@@ -153,7 +163,9 @@ const surveyBase = z.object({
   familySize: optionalString,
   expectedBudget: optionalString,
   informationSource: optionalString,
-  installmentCapacity: optionalString
+  installmentCapacity: optionalString,
+  remark:optionalString,
+  otherNewsChannel:optionalString
 });
 
 //create
@@ -174,39 +186,4 @@ export const updateSurveySchema = surveyBase.partial().transform(data => ({
   visitDate: data.visitDate ? new Date(data.visitDate) : undefined,
   preferredBedroom: data.preferredBedroom ? Number(data.preferredBedroom) : undefined,
   preferredBathroom: data.preferredBathroom ? Number(data.preferredBathroom) : undefined,
-}));
-
-//walkin survey ==========================================
-const walkinBase = z.object({
-  customerId: requiredString("customerId"),
-  userId: optionalNumberString,
-  visitDate: optionalDateString,
-  age: optionalNumberString,
-  desiredBuildingType: optionalString,
-  categoryType: optionalString,
-  floors: optionalNumberString,
-  budget: optionalString,
-  expectedStartTime: optionalString,
-  informationSource: optionalString,
-  remark: optionalString
-});
-
-//create
-export const createWalkinSchema = walkinBase.transform(data => ({
-  ...data,
-  customerId: Number(data.customerId),
-  userId: data.userId ? Number(data.userId) : undefined,
-  visitDate: data.visitDate ? new Date(data.visitDate) : undefined,
-  age: data.age ? Number(data.age) : undefined,
-  floors: data.floors ? Number(data.floors) : undefined,
-}));
-
-//update
-export const updateWalkinSchema = walkinBase.partial().transform(data => ({
-  ...data,
-  customerId: data.customerId ? Number(data.customerId) : undefined,
-  userId: data.userId ? Number(data.userId) : undefined,
-  visitDate: data.visitDate ? new Date(data.visitDate) : undefined,
-  age: data.age ? Number(data.age) : undefined,
-  floors: data.floors ? Number(data.floors) : undefined,
 }));

@@ -7,9 +7,9 @@ const router = express.Router()
 
 router.post("/",createSurvey)
 router.use(authenMiddleware)
+router.put("/:id",paramsValidator,editSurvey)
 router.get("/",getAllSurvey)
 router.get("/:id",paramsValidator,getSurveyById)
-router.put("/:id",paramsValidator,editSurvey)
 router.delete("/:id",paramsValidator,deleteSurvey)
 
 export default router

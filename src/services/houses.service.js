@@ -63,3 +63,35 @@ export async function deleteHouseImageService(houseId, imageId) {
     //soft delete
     return await prisma.houseImage.delete({ where: { imageId } })
 }
+
+export async function updateHouseImagesService(houseId, imageUrls) {
+    // 1. เช็คก่อนว่าบ้านมีอยู่จริงไหม
+    const checkHouse = await prisma.house.findFirst({ 
+        where: { houseId: houseId, deletedAt: null } 
+    });
+    if (!checkHouse) throw createError(404, "House not found");
+
+    // 2. ลบรูปเก่า "ทั้งหมด" ของบ้านหลังนี้ทิ้ง (เฉพาะในตาราง HouseImage)
+    await prisma.houseImage.deleteMany({
+        where: { houseId: houseId }
+    });
+
+    // 3. ถ้า Frontend ไม่ได้ส่งรูปมาเลย (ลบเกลี้ยง) ก็จบการทำงานแค่นี้
+    if (!imageUrls || imageUrls.length === 0) {
+        return [];
+    }
+
+    // 4. จัดรูปแบบ Array ให้ตรงกับ Schema ของฐานข้อมูล
+    const payload = imageUrls.map(url => ({
+        houseId: houseId,
+        imageUrl: url,
+        isCover: false // ให้รูปแรกเป็นปก (isCover: true) ก็ปรับตรงนี้ได้ครับ
+    }));
+
+    // 5. ใช้ createMany บันทึกรูปล็อตใหม่เข้าไป
+    await prisma.houseImage.createMany({ 
+        data: payload 
+    });
+
+    return payload;
+}

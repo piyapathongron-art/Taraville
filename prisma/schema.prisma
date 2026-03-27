@@ -72,6 +72,7 @@ model House {
   price       Decimal? @db.Decimal(12, 2)
   status      HStatus?
   details     String?  @db.Text
+  ownerPhone  String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -141,25 +142,25 @@ model Customer {
   district    String? @db.VarChar(100)
   province    String? @db.VarChar(100)
   zipcode     String? @db.VarChar(10)
+  gender      String? @db.VarChar(20)
+  occupation  String? @db.VarChar(100)
+  incomeRange String? @db.VarChar(100)
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  surveys ProjectSurvey[]
+  projectSurveys ProjectSurvey?
 }
 
 // Project Surveys
 // ==========================================
 model ProjectSurvey {
   surveyId               Int        @id @default(autoincrement())
-  customerId             Int
+  customerId             Int        @unique
   userId                 Int?
   surveyType             SurveyType @default(Online)
-  visitDate              DateTime?  @db.Date
-  gender                 String?    @db.VarChar(20)
-  occupation             String?    @db.VarChar(100)
-  incomeRange            String?    @db.VarChar(100)
+  visitDate              DateTime?  @default(now())
   interestedPropertyType String?    @db.VarChar(100)
   preferredBedroom       Int?
   preferredBathroom      Int?
@@ -168,6 +169,7 @@ model ProjectSurvey {
   informationSource      String?    @db.VarChar(255)
   installmentCapacity    String?    @db.VarChar(100)
   remark                 String?    @db.Text
+  otherNewsChannel       String?
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt

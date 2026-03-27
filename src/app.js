@@ -8,12 +8,24 @@ import housesRoutes from "./routes/houses.route.js"
 import assignmentRoutes from "./routes/assignment.route.js"
 import customerRoutes from "./routes/customer.routes.js"
 import surveyRoutes from "./routes/survey.route.js"
+import helmet from "helmet"
+import cors from "cors";
 const app = express()
 app.use(express.json())
 
-//CORS
 
+
+
+//CORS
+app.use(cors({
+    origin: ["http://localhost:5173"],
+    methods: ["GET" , "POST" , "PUT" , "DELETE"],
+    credentials: true
+}))
 //
+
+//HELMET
+app.use(helmet())
 
 app.get("/",(req,res)=> {
     res.send("test")

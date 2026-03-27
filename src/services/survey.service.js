@@ -16,6 +16,9 @@ export async function addSurvey(data) {
     //checkcustomerid
     const checkCustomer = await getCustomerBy("customerId", +data.customerId)
     if (!checkCustomer) throw createError(404, "check customer detail")
+
+        const existingCustomerSurvey = await getSurveyBy("customerId",+data.customerId)
+        if(existingCustomerSurvey) throw createError(409,"you already send survey")
     //create projectSurvey
     // seperate decisionFactors 
     const { decisionFactors, ...surveyData } = data;

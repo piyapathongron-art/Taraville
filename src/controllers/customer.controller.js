@@ -26,11 +26,7 @@ export async function createCustomer(req,res,next) {
     const result = await addCustomer(data)
     res.json({success:Boolean(result),
         message: "create customer success",
-        customer: {
-            Id: result.customerId,
-            firstname : result.firstName,
-            phone: result.phone
-        }
+        customer: result
     })
 }
 

@@ -15,6 +15,6 @@ export function verifyToken(token){
         return payload
     } catch (error) {
         console.log(error)
-        throw createError(400,"token mismatch")
+        throw createError(401,"token mismatch")
     }
 }

@@ -13,7 +13,7 @@ export async function createUser(body) {
 }
 
 export async function getUserBy(table, value) {
-    const result = await prisma.user.findUnique({ where: { [table]: value } })
+    const result = await prisma.user.findUnique({ where: { [table]: value ,deletedAt:null} })
     return result
 }
 
