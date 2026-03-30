@@ -2,7 +2,7 @@ import { prisma } from "../lib/prisma.js";
 import createError from "http-errors";
 
 export async function getAllCustomerService() {
-    const result = await prisma.customer.findMany({ where: { deletedAt: null } })
+    const result = await prisma.customer.findMany({ where: { deletedAt: null, projectSurveys:{deletedAt:null} },include:{projectSurveys:true} })
     return result
 }
 

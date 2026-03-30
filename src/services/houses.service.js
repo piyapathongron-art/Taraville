@@ -34,6 +34,8 @@ export async function editHouseService(id, data) {
     //check exist
     const check = await findHousesBy("houseId", id)
     if (!check) throw createError(404, "house not found")
+    const checkHouseCode = await findHousesBy("houseCode",data.houseCode)
+    if(checkHouseCode && checkHouseCode.houseId !== id ) throw createError(409,"this house code already exist")
     //edit house
     return await prisma.house.update({ where: { houseId: id }, data: data })
 }

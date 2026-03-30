@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import bcrypt from 'bcrypt';
-import { emailValidator, optionalDateString, optionalNumberString, optionalString, passwordValidator, phoneValidator, requiredNumber, requiredString, urlValidator } from '../utils/zodValidator.js';
+import { emailValidator, optionalDateString, optionalNumberString, optionalString, OwnerPhoneValidator, passwordValidator, phoneValidator, requiredNumber, requiredString, urlValidator } from '../utils/zodValidator.js';
 
 
 //Auth Schemas ==========================================
@@ -74,7 +74,7 @@ const houseBase = z.object({
   price: optionalNumberString,
   status: z.enum(['Available', 'Book', 'Sold', 'Repair', 'Building']).optional().default("Available"),
   details: optionalString,
-  ownerPhone : phoneValidator.optional()
+  ownerPhone : OwnerPhoneValidator
 });
 
 // create
@@ -103,8 +103,8 @@ export const updateHouseImagesSchema = z.object({
 
 //Assignment Schemas ==========================================
 const assignmentBase = z.object({
-  houseId: requiredString("houseId"),
-  empId: requiredString("empId"),
+  houseId: requiredNumber("houseId"),
+  empId: requiredNumber("empId"),
   taskTitle: requiredString("Task title"),
   taskDescription: optionalString,
   dutyRole: optionalString,
@@ -165,7 +165,8 @@ const surveyBase = z.object({
   informationSource: optionalString,
   installmentCapacity: optionalString,
   remark:optionalString,
-  otherNewsChannel:optionalString
+  otherNewsChannel:optionalString,
+  surveyType: z.enum(['Online', 'Walkin']).optional().default("Online")
 });
 
 //create

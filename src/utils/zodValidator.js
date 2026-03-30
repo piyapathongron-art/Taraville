@@ -21,6 +21,14 @@ export const phoneValidator = z.string()
   .min(9, "Phone must be at least 9 numbers")
   .max(10, "Phone maximum 10 numbers");
 
+export const OwnerPhoneValidator = z.string()
+  .regex(/^[0-9]*$/, "Phone must contain only numbers")
+  .min(9, "Phone must be at least 9 numbers")
+  .max(10, "Phone maximum 10 numbers")
+  .optional()
+  .or(z.literal(""))
+  .nullable();
+
 export const emailValidator = z.email("Invalid email format")
   .optional()
   .or(z.literal(""));

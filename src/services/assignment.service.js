@@ -6,7 +6,18 @@ import { getEmployeeByIdService } from "./employee.service.js";
 const now = new Date
 
 export async function getAllAssignmentService() {
-    const result = await prisma.assignment.findMany({ where: { deletedAt: null } })
+    const result = await prisma.assignment.findMany({
+        where:
+            { deletedAt: null,
+                house:{
+                    deletedAt:null
+                }
+             },
+        include: { house: true, employee:true },
+        orderBy: {
+            assignedDate: 'desc'
+        }
+    })
     return result
 }
 
@@ -30,7 +41,7 @@ export async function findAssignmentBy(col, val) {
 }
 
 export async function getMyAssignmentService(id) {
-    const result = await prisma.assignment.findMany({ where: { empId: id },include:{house:true} })
+    const result = await prisma.assignment.findMany({ where: { empId: id }, include: { house: true } })
     return result
 }
 
@@ -58,12 +69,12 @@ export async function editAssignmentService(id, data) {
     return result
 }
 
-export async function deleteAssignmentService(id){
+export async function deleteAssignmentService(id) {
     const now = new Date;
-    const check = await findAssignmentBy("assignmentId",id)
+    const check = await findAssignmentBy("assignmentId", id)
     //check assignment
-    if(!check) throw createError(404,"assignment not found")
+    if (!check) throw createError(404, "assignment not found")
     //delete assignment
-    const result = await prisma.assignment.update({ where:{assignmentId:id},data:{deletedAt:now}})
+    const result = await prisma.assignment.update({ where: { assignmentId: id }, data: { deletedAt: now } })
     return result
 }

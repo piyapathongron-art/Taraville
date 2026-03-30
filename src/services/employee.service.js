@@ -8,7 +8,7 @@ export async function allEmployee() {
             deletedAt:
                 null
         },
-        include:{user:{select:{userId:true}}}
+        include:{user:{select:{userId:true}},assignments:{where:{deletedAt:null}}}
     }
     )
     return result
