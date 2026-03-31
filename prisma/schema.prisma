@@ -17,7 +17,7 @@ model Employee {
   firstName  String     @db.VarChar(50)
   lastName   String     @db.VarChar(50)
   phone      String     @unique @db.VarChar(10)
-  email      String?    @db.VarChar(30)
+  email      String?    @db.VarChar(100)
   department Department @default(Employee)
   salary     Decimal?   @db.Decimal(10, 2)
   address    String?    @db.Text
@@ -52,7 +52,6 @@ model User {
 
   employee  Employee        @relation(fields: [empId], references: [employeeId])
   surveys   ProjectSurvey[]
-  auditLogs AuditLog[]
 }
 
 enum Role {
@@ -185,27 +184,6 @@ enum SurveyType {
   Walkin
 }
 
-// Audit Logs
-// ==========================================
-model AuditLog {
-  logId     Int      @id @default(autoincrement())
-  userId    Int?
-  action    Action
-  tableName String   @db.VarChar(100)
-  recordId  Int
-  oldData   Json?
-  newData   Json?
-  createdAt DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [userId], onDelete: SetNull)
-}
-
-enum Action {
-  CREATE
-  UPDATE
-  SOFTDELETE
-  HARDDELETE
-}
 
 model DecisionFactors {
   id             Int     @id @default(autoincrement())
