@@ -7,9 +7,9 @@ import { adminAuthen } from "../middlewares/roleAuthen.middleware.js";
 const router = express.Router()
 
 router.post("/",createCustomer)
+router.put("/:id",paramsValidator,editCustomer)
 router.use(authenMiddleware)
 router.use(adminAuthen)
-router.put("/:id",paramsValidator,editCustomer)
 
 router.get("/",getAllCustomer)
 router.get("/:id",paramsValidator,getCustomerById)
