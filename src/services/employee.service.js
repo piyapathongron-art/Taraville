@@ -14,6 +14,38 @@ export async function allEmployee() {
     return result
 }
 
+export async function getEmployeeBySearchService(search, department, page, limit) {
+    const whereCondition = {
+        deletedAt: null,
+        ...(search ? {
+            OR: [
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+                { phone: { contains: search } }
+            ]
+        } : {}),
+        ...(department ? { department: department } : {})
+    };
+    const [totalFiltered, result] = await prisma.$transaction([
+        // นำcount ไปทำเลขหน้า
+        prisma.employee.count({
+            where: whereCondition
+        }),
+        // ดึงข้อมูลจริงแบบจำกัดจำนวน limit
+        prisma.employee.findMany({
+            where: whereCondition,
+            include: { user: { select: { userId: true } }, assignments: { where: { deletedAt: null } } },
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { createdAt: 'desc' }
+        })
+    ]);
+    return {
+        total: totalFiltered,
+        employees: result
+    };
+}
+
 export async function getEmployeeByIdService(id) {
     console.log(id)
     const result = prisma.employee.findUnique({
@@ -79,6 +111,6 @@ export async function editEmployeesByUserService(id, data) {
         where: { employeeId: id },
         data: data
     })
-    
+
     return result
 }

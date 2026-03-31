@@ -1,5 +1,5 @@
 import express from "express";
-import { createEmployeeController, deleteEmployee, editEmployee, editEmployeeByUser, getAllEmployee, getEmployeeById } from "../controllers/employees.controller.js";
+import { createEmployeeController, deleteEmployee, editEmployee, editEmployeeByUser, getAllEmployee, getEmployeeById, getEmployeeBySearch } from "../controllers/employees.controller.js";
 import authenMiddleware from "../middlewares/authen.middleware.js";
 import { adminAuthen } from "../middlewares/roleAuthen.middleware.js";
 import paramsValidator from "../middlewares/paramsValidator.middleware.js";
@@ -10,6 +10,7 @@ router.use(authenMiddleware)
 
 router.get("/",adminAuthen,getAllEmployee)
 router.post("/",adminAuthen,createEmployeeController)
+router.get("/search",adminAuthen,getEmployeeBySearch)
 router.get("/:id",adminAuthen,paramsValidator,getEmployeeById)
 router.put("/:id",adminAuthen,paramsValidator,editEmployee)
 router.put("/editByUser/:id",paramsValidator,editEmployeeByUser)
