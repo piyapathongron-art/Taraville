@@ -1,5 +1,5 @@
 import express from "express";
-import { addHouse, addHouseImage, deleteHouse, deleteHouseImage, editHouse, getAllHouse, getHouseById, updateHouseImages } from "../controllers/houses.controller.js";
+import { addHouse, addHouseImage, deleteHouse, deleteHouseImage, editHouse, getAllHouse, getHouseById, getHousesBySearch, updateHouseImages } from "../controllers/houses.controller.js";
 import authenMiddleware from "../middlewares/authen.middleware.js";
 import { adminAuthen } from "../middlewares/roleAuthen.middleware.js"
 import paramsValidator from "../middlewares/paramsValidator.middleware.js";
@@ -7,6 +7,7 @@ import paramsValidator from "../middlewares/paramsValidator.middleware.js";
 const router = express.Router()
 
 router.get("/",getAllHouse)
+router.get("/search",getHousesBySearch)
 router.get("/:id", paramsValidator ,getHouseById)
 router.use(authenMiddleware)
 

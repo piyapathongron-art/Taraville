@@ -13,6 +13,47 @@ export async function getAllHousesService() {
     return result
 }
 
+export async function findHousesBySearch(search, type, status, page, limit) {
+    const whereCondition = {
+        deletedAt: null,
+        // ใช้ Spread Syntax (...) เพื่อเพิ่มเงื่อนไขเมื่อมีการส่งค่ามาเท่านั้น
+        ...(search ? {
+            OR: [
+                { houseName: { contains: search } },
+                { houseCode: { contains: search } }
+            ]
+        } : {}),
+        ...(type ? { houseType: type } : {}),
+        ...(status ? { status: status } : {})
+    };
+
+//ใช้ $transaction เพื่อรันคำสั่ง count และ findMany พร้อมกัน (ทำงานไวกว่า)
+    const [totalFiltered, result] = await prisma.$transaction([
+        // นำcount ไปทำเลขหน้า
+        prisma.house.count({
+            where: whereCondition
+        }),
+        // ดึงข้อมูลจริงแบบจำกัดจำนวน limit
+        prisma.house.findMany({
+            where: whereCondition,
+            include: {
+                images: true
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { createdAt: 'desc' } 
+        })
+
+        
+
+    ]);
+
+    return {
+        total: totalFiltered,
+        houses: result
+    };
+}
+
 export async function findHousesBy(col, val) {
     const result = await prisma.house.findFirst({ where: { [col]: val, deletedAt: null },
     include:{

@@ -60,3 +60,20 @@ export async function deleteEmployee(req,res,next){
         employeeId: result.employeeId
     })
 }
+
+export async function editEmployeeByUser(req,res,next){
+    //checked params by validator
+    const id = req.params.id
+    //validator
+    const data = await updateEmployeeSchema.parseAsync(req.body)
+
+    //edit 
+    const result = await editEmployeesService(id,data)
+    res.json({
+        status:Boolean(result),
+        message:"edit success",
+        employeeId: result.employeeId,
+        newData: data
+    })
+
+}
