@@ -21,6 +21,48 @@ export async function getAllAssignmentService() {
     return result
 }
 
+export async function getAssignmentBySearchService(search, status, sortAssignedDate,page, limit) {
+    const whereCondition = {
+        deletedAt: null,
+        ...(search ? {
+            OR: [
+                { taskTitle: { contains: search } },
+                { employee: {
+                    OR:[
+                        { firstName: { contains: search } },
+                        { lastName: { contains: search } }
+                    ]
+                } }
+            ]
+        } : {}),
+        ...(status ? { status: status } : {}),
+        house:{
+            deletedAt:null
+        }
+    };
+    const [totalFiltered, result] = await prisma.$transaction([
+        // นำcount ไปทำเลขหน้า
+        prisma.assignment.count({
+            where: whereCondition
+        }),
+        // ดึงข้อมูลจริงแบบจำกัดจำนวน limit
+        prisma.assignment.findMany({
+            where: whereCondition,
+            include: { house: true, employee:true },
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: {
+                assignedDate: sortAssignedDate === "asc" ? 'asc' : 'desc'   
+            }
+        })
+    ]);
+    return {
+        total: totalFiltered,   
+        result
+    };
+}
+
+
 export async function createAssignmentService(data) {
     //check house
     const checkHouse = await findHousesBy("houseId", +data.houseId)

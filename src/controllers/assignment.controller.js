@@ -1,10 +1,16 @@
 import createError from "http-errors"
-import { createAssignmentService, deleteAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getMyAssignmentService } from "../services/assignment.service.js"
+import { createAssignmentService, deleteAssignmentService, editAssignmentService, findAssignmentBy, getAllAssignmentService, getAssignmentBySearchService, getMyAssignmentService } from "../services/assignment.service.js"
 import { createAssignmentSchema, updateAssignmentSchema } from "../validators/schema.js"
 
 export async function getAllAssignment(req,res,next){
     const result = await getAllAssignmentService()
     res.json({totalAssignment:result.length,result})
+}
+
+export async function getAssignmentBySearch(req,res,next) {
+    const { search, status, sortAssignedDate,page = 1, limit = 8 } = req.query
+    const result = await getAssignmentBySearchService(search, status, sortAssignedDate, parseInt(page), parseInt(limit))
+    res.json(result)
 }
 
 export async function getAssignmentByid(req,res,next){
