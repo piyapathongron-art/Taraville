@@ -11,6 +11,40 @@ export async function getCustomerBy(col, val) {
     return result
 }
 
+export async function getCustomerBySeachService(search, type,house,budget ,page, limit) {
+    const whereCondition = {
+        deletedAt: null,
+        ...(search ? {
+            OR: [
+                { firstName: { contains: search } },
+                { lastName: { contains: search } },
+                { phone: { contains: search } }
+            ]
+        } : {}),
+        ...(type ? { projectSurveys:{ surveyType:type } } : {}),
+        ...(house ? { projectSurveys:{ interestedPropertyType:house } } : {}),
+        ...(budget ? { projectSurveys:{ budgetRange:budget } } : {})
+    };
+    const [totalFiltered, result] = await prisma.$transaction([
+        // นำcount ไปทำเลขหน้า
+        prisma.customer.count({
+            where: whereCondition
+        }),
+        // ดึงข้อมูลจริงแบบจำกัดจำนวน limit
+        prisma.customer.findMany({
+            where: whereCondition,
+            include:{projectSurveys:true},
+            skip: (page - 1) * limit,
+            take: limit,
+            orderBy: { customerId: 'asc' } 
+        })
+    ]);
+    return {
+        total: totalFiltered,
+        customers: result
+    };
+}
+
 export async function addCustomer(data) {
     const check = await getCustomerBy("phone", data.phone)
     //check customer by phone

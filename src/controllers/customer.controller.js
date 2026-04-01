@@ -1,4 +1,4 @@
-import { addCustomer, deleteCustomerService, editCustomerService, getAllCustomerService, getCustomerBy } from "../services/customer.service.js";
+import { addCustomer, deleteCustomerService, editCustomerService, getAllCustomerService, getCustomerBy, getCustomerBySeachService } from "../services/customer.service.js";
 import createError from "http-errors"
 import { createCustomerSchema, updateCustomerSchema } from "../validators/schema.js";
 export async function getAllCustomer(req, res, next) {
@@ -7,6 +7,12 @@ export async function getAllCustomer(req, res, next) {
         totalCustomer: result.length,
         result
     })
+}
+
+export async function getCustomerBySearch(req, res, next){
+    const { search, type,house,budget ,page = 1, limit = 8 } = req.query
+    const result = await getCustomerBySeachService(search, type,house,budget ,parseInt(page), parseInt(limit))
+    res.json(result)
 }
 
 export async function getCustomerById(req, res, next) {
