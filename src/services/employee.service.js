@@ -31,13 +31,13 @@ export async function getEmployeeBySearchService(search, department, page, limit
         prisma.employee.count({
             where: whereCondition
         }),
-        // ดึงข้อมูลจริงแบบจำกัดจำนวน limit
+        
         prisma.employee.findMany({
             where: whereCondition,
             include: { user: { select: { userId: true } }, assignments: { where: { deletedAt: null } } },
             skip: (page - 1) * limit,
             take: limit,
-            orderBy: { createdAt: 'desc' }
+            orderBy: { employeeId: 'asc' }
         })
     ]);
     return {

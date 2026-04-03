@@ -19,7 +19,7 @@ app.use(express.json())
 //CORS
 app.use(cors({
     origin: ["http://localhost:5173"],
-    methods: ["GET" , "POST" , "PUT" , "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
 }))
 //
@@ -27,16 +27,16 @@ app.use(cors({
 //HELMET
 app.use(helmet())
 
-app.get("/",(req,res)=> {
+app.get("/", (req, res) => {
     res.send("test")
 })
 
-app.use("/api/auth",authRoute)
-app.use("/api/employees",employeeRoute)
-app.use("/api/users",userRoutes)
-app.use("/api/houses",housesRoutes)
+app.use("/api/auth", authRoute)
+app.use("/api/employees", employeeRoute)
+app.use("/api/users", userRoutes)
+app.use("/api/houses", housesRoutes)
 app.use("/api/assignments", assignmentRoutes)
-app.use("/api/customers",customerRoutes)
+app.use("/api/customers", customerRoutes)
 app.use("/api/surveys", surveyRoutes)
 
 app.use(errorHandlerMiddleware)
